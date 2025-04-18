@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Passports</title>
+</head>
+<body>
+    <h1>Список паспортов</h1>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Фамилия</th>
+                <th>Имя</th>
+                <th>Дата рождения</th>
+            </tr>
+        </thead>
+        <tbody id="passports-table"></tbody>
+    </table>
+
+    <script>
+        async function loadPassports() {
+            try {
+                const response = await fetch('/passports');
+                const data = await response.json();
+                const table = document.getElementById('passports-table');
+                table.innerHTML = '';
+                data.forEach(passport => {
+                    const row = `<tr>
+                        <td>${passport.id}</td>
+                        <td>${passport.last_name}</td>
+                        <td>${passport.first_name}</td>
+                        <td>${passport.birth_date}</td>
+                    </tr>`;
+                    table.innerHTML += row;
+                });
+            } catch (error) {
+                console.error('Ошибка загрузки:', error);
+            }
+        }
+
+        loadPassports();
+    </script>
+</body>
+</html>
