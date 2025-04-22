@@ -12,7 +12,7 @@ const RegisterPage = () => {
     }
 
     try {
-      const response = await fetch("https://site04.sibinfo.ru/api/register", {
+      const response = await fetch("https://site04.sibinfo.ru:5000/api/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(values),

@@ -17,11 +17,18 @@ const pool = mysql.createPool({
 });
 
 const app = express();
-app.use(cors());
+
+
+const corsOptions = {
+    origin: 'https://site04.sibinfo.ru:3000',
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+};
+  
+app.use(cors(corsOptions));
 app.use(express.json());
 
-
-app.get('/api', (req, res) => {
+app.get('/', (req, res) => {
     res.send('Сервер работает!');
 });
 
@@ -128,7 +135,7 @@ app.get('/passports', async (req, res) => {
     }
 });
 
-app.listen(5000, '0.0.0.0', () => {
-    console.log('Server is running on port 5000');
-  });
+app.listen(5000, () => {
+    console.log("Сервер запущен на http://localhost:5000");
+});  
   

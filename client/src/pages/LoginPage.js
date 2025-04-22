@@ -8,7 +8,7 @@ const LoginPage = () => {
   const onFinish = async (values) => {
     console.log("Отправляемые данные:", values); // Логируем отправляемые данные
     try {
-      const response = await fetch("https://site04.sibinfo.ru/api/login", {
+      const response = await fetch("https://site04.sibinfo.ru:3000/server/api/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(values),
