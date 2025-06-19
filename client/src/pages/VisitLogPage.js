@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Layout, Table, Typography, Button, Modal, Descriptions, Card } from "antd";
 import { useNavigate } from "react-router-dom";
 
@@ -6,6 +6,9 @@ const { Header, Content } = Layout;
 const { Title } = Typography;
 
 const VisitLogPage = () => {
+  useEffect(() => {
+    document.title = "Журнал | sibinfo";
+  }, []);
   const navigate = useNavigate();
   const [selectedVisit, setSelectedVisit] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);

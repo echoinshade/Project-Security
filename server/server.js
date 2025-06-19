@@ -20,7 +20,7 @@ const app = express();
 
 
 const corsOptions = {
-    origin: 'https://site04.sibinfo.ru:3000',
+    origin: '*',
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
 };
@@ -74,7 +74,7 @@ app.post("/api/login", async (req, res) => {
             return res.status(401).json({ message: "Неверный email или пароль" });
         }
 
-        res.status(200).json({ message: "Вход успешен", role_id: user.role_id });
+        res.status(200).json({ message: "Вход успешен", role_id: user.role_id, userId: user.id });
     } catch (error) {
         console.error("Ошибка при входе:", error);
         res.status(500).json({ message: "Ошибка сервера" });
@@ -135,7 +135,62 @@ app.get('/passports', async (req, res) => {
     }
 });
 
+// Получение данных профиля пользователя по ID
+app.get("/api/profile/:id", async (req, res) => {
+    const userId = req.params.id;
+
+    try {
+        const connection = await pool.getConnection();
+
+        const [rows] = await connection.execute(
+            `SELECT 
+                users.id AS user_id,
+                users.email,
+                users.role_id,
+                passports.surname,
+                passports.name,
+                passports.patronymic,
+                passports.passport_series,
+                passports.passport_number,
+                passports.issued_by,
+                passports.issue_date,
+                passports.archive_NO,
+                passports.department_code
+            FROM users
+            LEFT JOIN passports ON users.passport_id = passports.id
+            WHERE users.id = ?`,
+            [userId]
+        );
+
+        connection.release();
+        console.log("Запрос на профиль пользователя ID:", userId);
+        console.log("Результат запроса:", rows);
+        if (rows.length === 0) {
+            return res.status(404).json({ message: "Пользователь не найден" });
+        }
+
+        const user = rows[0];
+        console.log("Полученные данные из JOIN:", rows);
+
+        res.json({
+            full_name: `${user.surname} ${user.name} ${user.patronymic}`,
+            email: user.email,
+            access_level: user.role_id === 1 ? "Администратор" :
+                          user.role_id === 2 ? "Охранник" : "Пользователь",
+            passport_series: user.passport_series,
+            passport_number: user.passport_number,
+            department_code: user.department_code,
+            issued_by: user.issued_by,
+            issue_date: user.issue_date,
+        });
+
+    } catch (error) {
+        console.error("Ошибка при получении профиля:", error);
+        res.status(500).json({ message: "Ошибка сервера" });
+    }
+});
+
 app.listen(5000, () => {
     console.log("Сервер запущен на http://localhost:5000");
-});  
+    });  
   

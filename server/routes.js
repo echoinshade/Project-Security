@@ -4,7 +4,7 @@ const db = require('./db');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-router.post('/api/register', async (req, res) => {
+router.post('/server/api/register', async (req, res) => {
     const { lastName, firstName, middleName, email, password, passportSeries, passportNumber } = req.body;
 
     if (!lastName || !firstName || !email || !password || !passportSeries || !passportNumber) {

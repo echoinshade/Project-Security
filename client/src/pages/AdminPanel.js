@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Layout, Menu, Table, Typography, Button, Dropdown } from "antd";
 import { useNavigate } from "react-router-dom";
 import { UserOutlined, LogoutOutlined, TeamOutlined, FileTextOutlined, IdcardOutlined } from "@ant-design/icons";
@@ -7,6 +7,9 @@ const { Header, Content } = Layout;
 const { Title } = Typography;
 
 const AdminPanel = () => {
+  useEffect(() => {
+    document.title = "Панель администратора | sibinfo";
+  }, []);
   const navigate = useNavigate();
   const [activePage, setActivePage] = useState("visit-log"); // Переключение между страницами
 

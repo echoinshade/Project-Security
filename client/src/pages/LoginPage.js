@@ -1,31 +1,55 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Form, Input, Button, message } from "antd";
 import { useNavigate } from "react-router-dom";
 
 const LoginPage = () => {
+  useEffect(() => {
+    document.title = "Логин | sibinfo";
+  }, []);
   const navigate = useNavigate();
 
   const onFinish = async (values) => {
     console.log("Отправляемые данные:", values); // Логируем отправляемые данные
     try {
-      const response = await fetch("https://site04.sibinfo.ru:3000/server/api/login", {
+      const response = await fetch("/server/api/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(values),
       });
-  
+
       console.log("Статус ответа:", response.status); // Логируем статус ответа
+
+      let data;
+      try {
+        data = await response.json(); // напрямую парсим JSON
+      } catch (error) {
+        console.error("Ошибка при разборе JSON:", error);
+        const text = await response.text();
+        console.log("Ответ текстом:", text);
+        message.error("Некорректный ответ от сервера");
+        return;
+      }
   
-      const data = await response.json();
-      console.log("Ответ от сервера:", data); // Логируем ответ от сервера
-  
+      console.log("Ответ от сервера:", data); // Логируем распарсенный JSON
+      console.log("Тип role_id:", typeof data.role_id, "Значение:", data.role_id); // Добавляем логирование role_id
+      
       if (response.ok) {
         message.success("Вход успешен!");
-        if (data.role_id === 1) {
+        const roleId = Number(data.role_id);
+        const userId = data.userId;
+        console.log("Преобразованный roleId:", roleId, "userId:", userId);
+
+        // Сохраняем userId в localStorage
+        localStorage.setItem("userId", userId);
+        console.log("Преобразованный roleId:", roleId);
+        if (roleId === 1) {
+          console.log("Перенаправление в админку");
           navigate("/admin");
-        } else if (data.role_id === 2) {
+        } else if (roleId === 2) {
+          console.log("Перенаправление в журнал посещений");
           navigate("/visit-log");
         } else {
+          console.log("Перенаправление в профиль (значение role_id:", roleId, ")");
           navigate("/profile");
         }
       } else {
